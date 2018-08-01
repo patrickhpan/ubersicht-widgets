@@ -1,6 +1,6 @@
 command: "/usr/local/bin/node ./lib/output.js",
 
-refreshFrequency: 250,
+refreshFrequency: 1000 / 60 * 10,
 
 render: function (output) {
   const { spotify, windows, time } = JSON.parse(output);
@@ -12,10 +12,11 @@ render: function (output) {
     html += `</img>`
     html += `<div class="spotify-info">`
       html += `<div class="spotify-track-name">`
-        html += `${spotify.artist}: ${spotify.name}`
+        html += spotify.artist ? spotify.artist + ": " : "";
+        html += spotify.name;
       html += `</div>`;
-      widthPercent = spotify.position / spotify.duration * 1000 * 100 
-      html += `<div class="spotify-bar" style="background:linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) ${widthPercent-1}%,rgba(255,255,255,0.3) ${widthPercent}%,rgba(255,255,255,0.3) 100%)">`
+      widthPercent = Math.floor(spotify.position / spotify.duration * 1000 * 100 * 2) / 2
+      html += `<div class="spotify-bar" style="background:linear-gradient(to right, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.6) ${widthPercent-1}%,rgba(255,255,255,0) ${widthPercent+1}%,rgba(255,255,255,0) 100%)">`
       html += `</div>`;
     html += `</div>`;
   html += `</div>`;
@@ -23,7 +24,7 @@ render: function (output) {
   html += `<div class="center">`;
   windows.forEach(({ id, owner, isActive }) => {
     const className = isActive ? 'window active' : 'window'
-    html += `<div class="${className}" id="${id}">${owner}</div>`
+    html += `<div class="${className}">${owner}</div>`
   })
   html += `</div>`;
 
@@ -33,15 +34,6 @@ render: function (output) {
 
   html += `</div>`;
   return html;
-},
-
-afterRender: function (domEl) {
-  [...domEl.querySelectorAll(".window")].forEach(el => {
-    el.onclick = () => {
-      console.log(el.innerText)
-      this.run(`open -a ${el.innerText.trim()}`);
-    };
-  })
 },
 
 style: `
@@ -115,8 +107,12 @@ style: `
   justify-content: center;
 }
 .spotify-bar {
-  margin-top: 0.5em;
-  height: 2px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: auto;
+  height: 1px;
   width: 100%;
 }
 `
