@@ -22,10 +22,8 @@ render: function (output) {
 
   html += `<div class="center">`;
   windows.forEach(({ id, owner, isActive }) => {
-    const onClick = () => {
-    }
     const className = isActive ? 'window active' : 'window'
-    html += `<div class="${className}">${owner}</div>`
+    html += `<div class="${className}" id="${id}">${owner}</div>`
   })
   html += `</div>`;
 
@@ -35,6 +33,15 @@ render: function (output) {
 
   html += `</div>`;
   return html;
+},
+
+afterRender: function (domEl) {
+  [...domEl.querySelectorAll(".window")].forEach(el => {
+    el.onclick = () => {
+      console.log(el.innerText)
+      this.run(`open -a ${el.innerText.trim()}`);
+    };
+  })
 },
 
 style: `
@@ -75,6 +82,7 @@ style: `
   padding: 0.5em 1em;
 }
 .window {
+  cursor: pointer;
   padding-left: 3em;
   padding-right: 3em;
   margin: 0.25em 2em;
