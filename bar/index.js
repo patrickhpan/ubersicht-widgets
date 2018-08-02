@@ -1,6 +1,6 @@
 command: "/usr/local/bin/node ./lib/output.js",
 
-refreshFrequency: 1000 / 60 * 10,
+refreshFrequency: 1000 / 10,
 
 render: function (output) {
   const { spotify, windows, time } = JSON.parse(output);
@@ -11,20 +11,31 @@ render: function (output) {
     html += `<img class="spotify-img" src=${spotify.artwork_url}>`
     html += `</img>`
     html += `<div class="spotify-info">`
-      html += `<div class="spotify-track-name">`
-        html += spotify.artist ? spotify.artist + ": " : "";
+      html += `<div class="spotify-track">`
         html += spotify.name;
+      html += `</div>`
+      html += `<div class="spotify-artist">`
+        html += spotify.artist;
       html += `</div>`;
-      widthPercent = Math.floor(spotify.position / spotify.duration * 1000 * 100 * 2) / 2
-      html += `<div class="spotify-bar" style="background:linear-gradient(to right, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.6) ${widthPercent-1}%,rgba(255,255,255,0) ${widthPercent+1}%,rgba(255,255,255,0) 100%)">`
+      widthPercent = Math.floor(spotify.position / spotify.duration * 1000 * 100)
+      html += `<div class="spotify-bar" style="background:linear-gradient(to right, rgba(255,255,255,0.6) 0%,rgba(255,255,255,0.6) ${widthPercent-0.1}%,rgba(255,255,255,0) ${widthPercent+0.1}%,rgba(255,255,255,0) 100%)">`
       html += `</div>`;
     html += `</div>`;
   html += `</div>`;
 
   html += `<div class="center">`;
-  windows.forEach(({ id, owner, isActive }) => {
+  windows.forEach(({ id, owner, title, isActive }) => {
     const className = isActive ? 'window active' : 'window'
-    html += `<div class="${className}">${owner}</div>`
+    html += `<div class="${className}">`
+      html += `<div class="window-owner">`
+        html += owner
+      html += `</div>`
+      /*
+      html += `<div class="window-title">`
+        html += title
+      html += `</div>`
+      */
+    html += `</div>`
   })
   html += `</div>`;
 
@@ -82,8 +93,19 @@ style: `
   border-bottom: 1px solid transparent;
   text-align: center;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+.window-owner {
+}
+.window-title {
+  max-width: 10em;
+  font-size: 0.75em;
+  color: rgba(255,255,255,0.8)
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .active {
   background-color: rgba(255,255,255,0.3);
@@ -95,16 +117,22 @@ style: `
   align-items: center;
 }
 .spotify-img {
-  height: 2.5em;
-  width: 2.5em;
+  height: 100%;
   margin-right: 1em;
   align-self: center;
+  flex: 0;
 }
 .spotify-info {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
+}
+.spotify-track {
+}
+.spotify-artist {
+  font-size: 0.75em;
+  color: rgba(255,255,255,0.8)
 }
 .spotify-bar {
   position: fixed;
