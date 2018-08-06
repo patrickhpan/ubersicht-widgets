@@ -62,7 +62,7 @@ style: `
   align-items: stretch;
   justify-content: space-between;
   font-family: Avenir Next;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.75);
 }
 .left { 
   flex: 1;
@@ -131,7 +131,7 @@ style: `
 .spotify-track {
 }
 .spotify-artist {
-  font-size: 0.75em;
+  font-size: 0.8em;
   color: rgba(255,255,255,0.8)
 }
 .spotify-bar {
